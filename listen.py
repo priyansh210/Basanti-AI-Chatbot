@@ -1,13 +1,8 @@
 import translate as ts
-
-
 import speech_recognition as sr
 
 
-from extract_info import *
-
-
-def takeCommandHindi():
+def listenHindi():
 
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -31,7 +26,7 @@ def takeCommandHindi():
         return Query
 
 
-def takeCommandEnglish():
+def listenEnglish():
 
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -50,22 +45,3 @@ def takeCommandEnglish():
             print("Say that again sir")
             return "None"
         return Query
-
-
-while 1:
-    ans = input("Do you want to ask a question y/n : ")
-    if ans in "nN":
-        break
-
-    sentence = takeCommandEnglish()
-
-    # que = sr_eng.speech_rec()
-    # que = json.loads(que)
-    # sentence = que["text"]
-
-    print(sentence)
-
-    # sentence = "tell priyansh to that the meeting is scheduled on 20 jan 5 in the evening  "
-
-    data = extract_info("priyansh", sentence)
-    print(data)
