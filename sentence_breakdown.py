@@ -22,7 +22,7 @@ known_person = [
     "naveen",
     "harshit",
     "aswin",
-    "herchelle",
+    "herschelle",
 ]
 
 known_objects = ["messsage", "schedule", "inventory", "funds", "list"]
@@ -61,7 +61,7 @@ def find_functionality(action):
     return best_ans
 
 
-def break_querry(sentence):
+def break_querry(sentence: str):
 
     # return dict
 
@@ -167,6 +167,6 @@ def break_querry(sentence):
     return answer
 
 
-sentence = "input sentence"
-ans = break_querry(sentence)
-print(ans)
+# sentence = ""
+# ans = break_querry(sentence)
+# print(ans)
