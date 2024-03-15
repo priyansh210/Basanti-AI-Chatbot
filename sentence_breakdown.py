@@ -3,48 +3,29 @@ import pandas as pd
 
 nlp = spacy.load("en_core_web_lg")
 import dateparser
-
+from listen import *
 from transformers import pipeline
+from KB import *
 
 qa_model = pipeline("question-answering")
 
 
-known_person = [
-    "I",
-    "everyone",
-    "mashaal",
-    "priyansh",
-    "anmol",
-    "divyansh",
-    "rupesh",
-    "rajesh",
-    "ashutosh",
-    "naveen",
-    "harshit",
-    "aswin",
-    "herschelle",
-]
+def phrase_handling(action):
 
-known_objects = ["messsage", "schedule", "inventory", "funds", "list"]
+    options = set(functionality_space.values())
 
-functionality_space = {
-    "add reminder": "ADD MESSAGE",
-    "add message": "ADD MESSAGE",
-    "tell": "ADD MESSAGE",
-    "send message": "SEND MESSAGE",
-    "drop message": "ADD MESSAGE",
-    "have message": "GET MESSAGE",
-    "remind": "ADD MESSAGE",
-    "leave message": "ADD MESSAGE",
-    "add": "ADD",
-    "create list": "CREATE LIST",
-    "add event": "ADD TO SCHEDULE",
-    "schedule event": "ADD TO SCHEDULE",
-    "add expense": "REMOVE FUND",
-    "add fund": "ADD FUND",
-    "remove fund": "REMOVE FUND",
-    "spend": "REMOVE FUND",
-}
+    # dispaly options:
+    for i, op in enumerate(options):
+        print(i, op)
+    print(i + 1, "OTHER")
+
+    strr = "Which action did you infer from:" + action
+    print(strr)
+    ans = listenEnglish()
+    function = find_functionality(ans)[1]
+
+    # add functionlity
+    functionality_space[action] = function
 
 
 def find_functionality(action):
@@ -98,7 +79,12 @@ def break_querry(sentence: str):
 
     print("Simplified Sentence :", sentence)
 
-    function = find_functionality(action)[1]
+    function = find_functionality(action)
+
+    # unknow action handling
+    if function[0] < 0.6:
+        phrase_handling(action)
+
     print("Functionlaity:", function)
     answer["FUNCTION"] = function
 
@@ -114,7 +100,7 @@ def break_querry(sentence: str):
         token = stack.pop()
 
         for i in token.children:
-            if i.pos_ in ["PRON", "PROPN", "ADP"] and i not in visited:
+            if i.pos_ not in ["VERB"] and i not in visited:
                 stack.append(i)
                 visited.append(i)
                 if i.pos_ in ["PRON", "PROPN"]:
@@ -168,6 +154,6 @@ def break_querry(sentence: str):
     return answer
 
 
-# sentence = "send Aswin a message to meet Herschelle"
+# sentence = "input sentence"
 # ans = break_querry(sentence)
 # print(ans)
