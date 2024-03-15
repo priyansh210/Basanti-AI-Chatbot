@@ -163,10 +163,11 @@ def break_querry(sentence: str):
 
     print("Where:", w4)
     answer["WHERE"] = w4
+    print(answer)
 
     return answer
 
 
-# sentence = ""
+# sentence = "send Aswin a message to meet Herschelle"
 # ans = break_querry(sentence)
 # print(ans)
