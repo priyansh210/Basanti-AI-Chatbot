@@ -34,24 +34,23 @@ I = bsnti.Inventory()
 #     break
 
 while 1:
-    # ans = input("Do you want to ask a question y/n : ")
-    # if ans in "nN":
-    #     break
+    ans = input("Do you want to ask a question y/n : ")
+    if ans in "nN":
+        break
 
-    # sentence = listenEnglish()
+    sentence = listenEnglish()
 
-    # # que = sr_eng.speech_rec()
-    # # que = json.loads(que)
-    # # sentence = que["text"]
+    # que = sr_eng.speech_rec()
+    # que = json.loads(que)
+    # sentence = que["text"]
 
-    # print(sentence)
-    sentence = 'send a message to Ashwin saying that your phone is in the lab'
+    print(sentence)
     # sentence = "tell priyansh to that the meeting is scheduled on 20 jan 5 in the evening  "
 
     broken_query = break_querry(sentence)
     print(broken_query)
 
-    match broken_query['FUNCTION']:
+    match broken_query['FUNCTION'][1]:
         case "ADD MESSAGE":
             necessary_params = ["WHO", "WHAT"] #add where to prompt if message has to be sent
             wf.checkNecessaryParams(broken_query, necessary_params)
