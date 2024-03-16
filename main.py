@@ -1,6 +1,8 @@
 import sentence_breakdown as sb
 import new_features.wrapperfunctions as wf #has the functions calling apis. Change baseURL in backendrequests to connect to correct database
 import new_features.bsnti as bsnti #has the classes
+import datetime
+import json
 
 break_query = sb.break_querry
 
@@ -11,11 +13,12 @@ S = bsnti.Schedules()
 I = bsnti.Inventory()
 
 while True:
-    prompt = "Tell Ashwin to meet Herschelle tomorrow" #add funtion here to get input
+    prompt = "Schedule a meeting with Aswin tomorrow at 9pm" #add funtion here to get input
 
     broken_query = break_query(prompt)
-
-    match broken_query['FUNCTION']:
+    # broken_query = {'FUNCTION': 'ADD TO SCHEDULE', 'ACTION': 'schedule meeting', 'WHO': [], 'WHAT': 'a meeting with Aswin tomorrow', 'WHEN': datetime.datetime(2024, 3, 17, 5, 22, 27, 725344).isoformat() , 'WHERE': 'Aswin tomorrow'}
+    print(broken_query)
+    match broken_query['FUNCTION']:#
         case "ADD MESSAGE":
             necessary_params = ["WHO", "WHAT"] #add where to prompt if message has to be sent
             wf.checkNecessaryParams(broken_query, necessary_params)
@@ -23,7 +26,16 @@ while True:
         case "SEND MESSAGE":
             necessary_params = ["WHO", "WHAT"] #add where to prompt if message has to be sent
             wf.checkNecessaryParams(broken_query, necessary_params)
-            wf.createMessage(M, broken_query)
+            wf.createMessage(S, broken_query)
+
+
+
+        case "ADD TO SCHEDULE":
+            necessary_params = ["WHAT", "WHERE"] #add where to prompt if message has to be sent
+            wf.checkNecessaryParams(broken_query, necessary_params)
+            wf.addToSchedule(S, broken_query)
+
+
         case _:
             #apologize and prompt again for the query
             pass

@@ -70,12 +70,12 @@ class message(TemplateClass):
     def __init__(self, cb: person, cf:list[person], co:str, t:datetime.datetime) -> None:
         super().__init__(cb, cf, co, t) 
 
-class events(TemplateClass):
-    def __init__(self, cb, cf, co, t, Time, Venue) -> None:
+class events(TemplateClass): 
+    def __init__(self, cb, cf, co, t, Time: datetime.datetime, Venue) -> None: #co-> content // t->time of creation // T->time of event
         super().__init__(cb, cf, co, t)
+        print(Time)
         #name of event stored in content
-        super().updateProperty( "Time", Time) #make this better by changing update property to take in a dictionary
-        super().updateProperty( "Time", Time)
+        super().updateProperty( {"Time": Time}) #make this better by changing update property to take in a dictionary
 class Messages: 
     def __init__(self) -> None:
         self.all_messages: list[message] = []

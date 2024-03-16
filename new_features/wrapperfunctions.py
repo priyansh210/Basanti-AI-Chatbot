@@ -2,7 +2,7 @@ import new_features.backendrequests as backendrequests
 import new_features.bsnti as bsnti
 import json
 import datetime
-
+import dateparser
 '''structure of objects:
     {
         'collection': '', ex: messages, tasks, schedules, people
@@ -61,7 +61,14 @@ def createMessage(M:bsnti.Messages, props:dict):
     mess.addID(id)
     M.add_message(mess)
 
-
+def addToSchedule(E: bsnti.Schedules, props: dict):
+    event = bsnti.events("", props["WHO"],props["WHAT"], datetime.datetime.now().isoformat() ,props["WHEN"].isoformat(), props["WHERE"])
+    query = backendrequests.addEventToBackend(event)
+    query = query.json()
+    print(query)
+    id = query['id']
+    event.addID(id)
+    E.add_event(event)
 #events
 def createEvent(S:bsnti.Schedules, cb:str="", cf:str="", co:str="", t:datetime.datetime="", Time:datetime.datetime="", Venue:str=""):
     if cb == "":
@@ -106,7 +113,18 @@ def createInvObj(I:bsnti.Inventory, n: str="", l: str="", q: str=""):
 #check function for necessary params returned from query breaker
 
 def checkNecessaryParams(broken_query: dict, necessary_params: list):
-    for el in necessary_params:
-        if broken_query[el] == None:
-            #prompt here for the param and add it to the broken_query
-            pass
+    # for el in necessary_params:
+    #     if broken_query[el] == None:
+    #         #prompt here for the param and add it to the broken_query
+    #         pass
+
+    for key, val in broken_query.items():
+        if not val:
+            new_input= input(f"Enter {key} (for multiple values, leave spaces): ")
+            if key=="WHEN":
+                broken_query[key] = dateparser.parse(new_input)
+            if key=="WHO":
+                broken_query[key] = new_input.strip().split(' ')
+            else:
+                broken_query[key] = new_input
+            

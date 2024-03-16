@@ -4,8 +4,7 @@ import json
 from typing import Union
 baseURL = "http://172.17.7.92:8000"
 
-#person
-#change functions to one function 
+ 
 
 def addPersonToBackend(p: bsnti.person):
     temp = {
@@ -46,7 +45,7 @@ def addEventToBackend(e:bsnti.events):
     temp = {
         'properties': e.properties
     }
-    query = requests.post(baseURL+'/messages', json = temp)
+    query = requests.post(baseURL+'/schedules', json = temp)
     return query
 
 #inventory objects

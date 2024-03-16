@@ -8,7 +8,7 @@ from transformers import pipeline
 
 qa_model = pipeline("question-answering")
 
-
+#python -m spacy download en_core_web_lg
 known_person = [
     "I",
     "everyone",
@@ -167,6 +167,6 @@ def break_querry(sentence: str):
     return answer
 
 
-# sentence = ""
+# sentence = "add to schedule, meeting tommorrow at 9pm"
 # ans = break_querry(sentence)
 # print(ans)
