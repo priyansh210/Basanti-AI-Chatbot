@@ -163,6 +163,7 @@ def break_querry(sentence: str):
 
     print("Where:", w4)
     answer["WHERE"] = w4
+    print(answer)
 
     return answer
 
