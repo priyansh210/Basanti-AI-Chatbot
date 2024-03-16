@@ -9,6 +9,16 @@ from KB import *
 
 qa_model = pipeline("question-answering")
 
+import difflib
+
+def find_known_names(target, known_names):
+    found_names = []
+    for people in target:
+        closest_match = difflib.get_close_matches(people, known_names, n=1, cutoff=0.7)
+        if closest_match:
+            found_names.append(closest_match[0])
+    return found_names
+
 
 def phrase_handling(action):
 
@@ -106,6 +116,8 @@ def break_querry(sentence: str):
                 if i.pos_ in ["PRON", "PROPN"]:
                     target_people.append(i.lemma_)
 
+    target_people = find_known_names(target_people,known_person)
+
     print("Who :", target_people)
     answer["WHO"] = target_people
 
@@ -149,7 +161,6 @@ def break_querry(sentence: str):
 
     print("Where:", w4)
     answer["WHERE"] = w4
-    print(answer)
 
     return answer
 
