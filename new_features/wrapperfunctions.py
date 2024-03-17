@@ -1,8 +1,8 @@
-import new_features.backendrequests as backendrequests
-import new_features.bsnti as bsnti
+import backendrequests as backendrequests
+import bsnti as bsnti
 import json
 import datetime
-import dateparser
+# import dateparser
 '''structure of objects:
     {
         'collection': '', ex: messages, tasks, schedules, people
@@ -127,4 +127,15 @@ def checkNecessaryParams(broken_query: dict, necessary_params: list):
                 broken_query[key] = new_input.strip().split(' ')
             else:
                 broken_query[key] = new_input
+
+
             
+def createPersonContext(name):
+    res = backendrequests.getPersonByName(name)
+    data = res["data"]["properties"]
+    context = ""
+    for key, value in data.items():
+        context += str(key) + ': '+ str(value) +'\n'
+    return context[:-1]
+temp = createPersonContext('herschelle')
+print(temp)

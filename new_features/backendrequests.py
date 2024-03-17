@@ -1,4 +1,4 @@
-import new_features.bsnti as bsnti 
+import bsnti as bsnti 
 import requests
 import json
 from typing import Union
@@ -28,6 +28,10 @@ def updateDoc(obj: Union[bsnti.person, bsnti.message, bsnti.events], collection:
                "id": obj.id,
                "properties": obj.properties}
     requests.post(baseURL + '/update', json = payload)
+def getPersonByName(name):
+    query = requests.get(baseURL + "/people/" + name)
+    query  =json.loads(query.content)
+    return query
 
 
 #message
