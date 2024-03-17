@@ -86,10 +86,8 @@ class events(TemplateClass):
     def __init__(self, created_by, created_for, content, t, Time, Venue) -> None:
         super().__init__(created_by, created_for, content, t)
         # name of event stored in content
-        super().updateProperty(
-            "Time", Time
-        )  # make this better by changing update property to take in a dictionary
-        super().updateProperty("Time", Time)
+        # make this better by changing update property to take in a dictionary
+        super().updateProperty({"Time": Time})
 
 
 class Messages:

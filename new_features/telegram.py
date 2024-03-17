@@ -21,9 +21,11 @@ mapping = {
 }
 
 def sendTelegramMessage(nameList:list[str], message:str):
-    print("here")
     for name in nameList:
         chat_id = mapping[name.lower().strip()]
         message = '&text='+message
-        success = requests.get(baseURL+str(chat_id)+message)
+        try: 
+            success = requests.get(baseURL+str(chat_id)+message)
+        except Exception as e:
+            print(e)
         print(success)

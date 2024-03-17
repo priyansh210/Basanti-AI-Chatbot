@@ -15,9 +15,6 @@ from sentence_breakdown import *
 """
 
 
-def QuestionForMissingParameter(param: str):
-    # basanti asks for the parameter
-    return  # parameter value
 
 
 # person
@@ -45,14 +42,6 @@ def createMessage(
     co: str = "",
     t: datetime.datetime = "",
 ):
-    if cb == "":
-        cb = QuestionForMissingParameter("created by")
-    if cf == "":
-        cf = QuestionForMissingParameter("created for")
-    if co == "":
-        co = QuestionForMissingParameter("content")
-    if t == "":
-        t = QuestionForMissingParameter("time")
 
     mess = bsnti.message(cb, cf, co, t.isoformat())
     query = backendrequests.addMessageToBackend(mess)
@@ -75,46 +64,30 @@ def createMessage(
 
 
 # events
-def createEvent(
-    S: bsnti.Schedules,
-    cb: str = "",
-    cf: str = "",
-    co: str = "",
-    t: datetime.datetime = "",
-    Time: datetime.datetime = "",
-    Venue: str = "",
-):
-    if cb == "":
-        cb = QuestionForMissingParameter("created by")
-    if cf == "":
-        cf = QuestionForMissingParameter("created for")
-    if co == "":
-        co = QuestionForMissingParameter("content")
-    if t == "":
-        t = QuestionForMissingParameter("time created")
-    if Time == "":
-        Time = QuestionForMissingParameter("Time of Event")
-    if Venue == "":
-        Venue = QuestionForMissingParameter("Venue")
-
-    event = bsnti.events(cb, cf, co, t.isoformat(), Time.isoformat(), Venue)
+# def createEvent(
+#     S: bsnti.Schedules,
+#     broken_query: dict
+# ):
+#     event = bsnti.events(broken_query.cb, cf, co, t.isoformat(), Time.isoformat(), Venue)
+#     query = backendrequests.addEventToBackend(event)
+#     query = query.json()
+#     id = query["id"]
+#     event.addID(id)
+#     S.add_event(event)
+def createEvent(E: bsnti.Schedules, props: dict):
+    event = bsnti.events("", props["WHO"],props["WHAT"], datetime.datetime.now().isoformat() ,props["WHEN"].isoformat(), props["WHERE"])
     query = backendrequests.addEventToBackend(event)
     query = query.json()
-    id = query["id"]
+    print(query)
+    id = query['id']
     event.addID(id)
-    S.add_event(event)
+    E.add_event(event)
 
 
 # inv_objects
 
 
 def createInvObj(I: bsnti.Inventory, n: str = "", l: str = "", q: str = ""):
-    if n == "":
-        n = QuestionForMissingParameter("name of object")
-    if l == "":
-        l = QuestionForMissingParameter("location")
-    if q == "":
-        q == QuestionForMissingParameter("quantity")
 
     obj = bsnti.inv_object(n, l, q)
     query = backendrequests.addObjToBackend(obj)
@@ -131,36 +104,58 @@ def checkNecessaryParams(broken_query: dict, necessary_params: list):
     for el in necessary_params:
         if broken_query[el] == None:
             if el == "WHO":
-                question = "Who do I " + broken_query["ACTION"] + " for?"
-                print(question)
-                speak.speakEnglish(question)
-                answer = listen.listenEnglish()
+                answer = None
+                while answer is None:
+                    question = "Who do I " + broken_query["ACTION"] + " for?"
+                    speak.speakEnglish(question)
+                    answer = listen.listenEnglish()
                 answer = get_target(answer)
+                print(answer)
                 broken_query["WHO"] = answer
 
             elif el == "WHEN":
-                question = "When do I " + broken_query["ACTION"]
-                print(question)
-                speak.speakEnglish(question)
-                answer = listen.listenEnglish()
+                answer = None
+                while answer is None:
+                    question = "When do I " + broken_query["ACTION"]
+                    speak.speakEnglish(question)
+                    answer = listen.listenEnglish()
+                # print(question)
+                # speak.speakEnglish(question)
+                # answer = listen.listenEnglish()
                 answer = get_when(answer)
                 broken_query["WHEN"] = answer
 
             elif el == "WHERE":
-                question = "Where do I " + broken_query["ACTION"]
-                print(question)
-                speak.speakEnglish(question)
-                answer = listen.listenEnglish()
+                answer = None
+                while answer is None:
+                    question = "Where do I " + broken_query["ACTION"]
+                    speak.speakEnglish(question)
+                    answer = listen.listenEnglish()
+                # question = "When do I " + broken_query["ACTION"]
+                # print(question)
+                # speak.speakEnglish(question)
+                # answer = listen.listenEnglish()
                 broken_query["WHERE"] = answer
 
             elif el == "WHAT":
-                question = "What do I " + broken_query["ACTION"]
-                print(question)
-                speak.speakEnglish(question)
-                answer = listen.listenEnglish()
+                answer = None
+                while answer is None:
+                    question = "What do I " + broken_query["ACTION"]
+                    speak.speakEnglish(question)
+                    answer = listen.listenEnglish()
+                # print(question)
+                # speak.speakEnglish(question)
+                # answer = listen.listenEnglish()
                 broken_query["WHAT"] = answer
 
             # prompt here for the param and add it to the broken_query
             pass
 
     return broken_query
+def createPersonContext(name):
+    res = backendrequests.getPersonByName(name)
+    data = res["data"]["properties"]
+    context = ""
+    for key, value in data.items():
+        context += str(key) + ': '+ str(value) +'\n'
+    return context[:-1]

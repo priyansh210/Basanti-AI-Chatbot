@@ -8,7 +8,7 @@ import speak
 
 break_query = sb.break_querry
 
-from data import MESSAGES
+from data import MESSAGES, SCHEDULES
 
 
 def action_bot(created_by):
@@ -34,7 +34,7 @@ def action_bot(created_by):
 
         wf.createMessage(MESSAGES, broken_query)
 
-    elif "SEND MESSAGE":
+    elif action == "SEND MESSAGE":
 
         necessary_params = [
             "WHO",
@@ -55,6 +55,14 @@ def action_bot(created_by):
         # conditions
 
         telegram.sendTelegramMessage(broken_query["WHO"], broken_query["WHAT"])
+    
+    elif action ==  "ADD TO SCHEDULE":
+        necessary_params = ["WHO", "WHAT", "WHERE",  "WHEN"] #add where to prompt if message has to be sent
+        broken_query = wf.checkNecessaryParams(broken_query, necessary_params)
+        msg = broken_query["WHAT"]+" "+broken_query["WHEN"].isoformat()+" "+broken_query["WHERE"]
+        print(msg)
+        telegram.sendTelegramMessage(broken_query["WHO"], broken_query["WHAT"]+" "+broken_query["WHEN"].isoformat()+" "+broken_query["WHERE"])
+        wf.createEvent(SCHEDULES, broken_query)
 
     else:
         speak.speakEnglish("Sorry could you please repeat your querry")
