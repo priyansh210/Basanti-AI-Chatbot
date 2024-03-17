@@ -8,7 +8,7 @@ import speak
 
 break_query = sb.break_querry
 
-global MESSAGES
+from data import MESSAGES
 
 
 def action_bot(created_by):
