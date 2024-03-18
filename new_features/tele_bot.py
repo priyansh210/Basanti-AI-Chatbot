@@ -8,16 +8,19 @@ message = 'helo'
 aswin_chat_id = 5151689696
 herschelle_chat_id = 7184297938
 priyansh_chat_id = 6090055937
+shubh_chat_id = 1406495803
+anmol_chat_id = 1312559056
+krishna_chat_id = 905819833
 
 baseURL = 'https://api.telegram.org/bot6934287768:AAGhxy-yrKIyhD4eOzgakBMivGfps64Ddtk/sendMessage?chat_id=' #+str(aswin_chat_id)+'&text='+message
 
 mapping = {
     'herschelle': herschelle_chat_id,
-    'Herschelle': herschelle_chat_id,
     'aswin': aswin_chat_id,
-    'Aswin': aswin_chat_id,
-    'Priyansh': priyansh_chat_id,
-    'priyansh': priyansh_chat_id
+    'priyansh': priyansh_chat_id,
+    'shubh': shubh_chat_id,
+    'anmol': anmol_chat_id,
+    'krishna': krishna_chat_id
 }
 
 def sendTelegramMessage(nameList:list[str], message:str):
