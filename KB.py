@@ -11,7 +11,7 @@ known_person = [
     "naveen",
     "harshit",
     "aswin",
-    "herchelle",
+    "herschelle",
 ]
 
 

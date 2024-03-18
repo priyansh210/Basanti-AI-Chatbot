@@ -11,6 +11,7 @@ qa_model = pipeline("question-answering")
 
 import difflib
 
+
 def find_known_names(target, known_names):
     found_names = []
     for people in target:
@@ -32,13 +33,13 @@ def phrase_handling(action):
     strr = "Which action did you infer from:" + action
     print(strr)
     ans = listenEnglish()
-    function = find_functionality(ans)[1]
+    function = get_functionality(ans)[1]
 
     # add functionlity
     functionality_space[action] = function
 
 
-def find_functionality(action):
+def get_functionality(action):
     best_ans = (0, 0)
 
     for act in functionality_space:
@@ -52,13 +53,7 @@ def find_functionality(action):
     return best_ans
 
 
-def break_querry(sentence: str):
-
-    # return dict
-
-    answer = {}
-
-    # simplify the sentence and retrieve the root, action
+def break_sentence(sentence):
 
     doc = nlp(sentence)
     simple_sentence = ""
@@ -87,52 +82,41 @@ def break_querry(sentence: str):
     sentence = simple_sentence.strip()
     action = action.strip()
 
-    print("Simplified Sentence :", sentence)
+    return sentence, action, root_node
 
-    function = find_functionality(action)
 
-    # unknow action handling
-    if function[0] < 0.6:
-        phrase_handling(action)
+def get_root(sentence):
+    doc = nlp(sentence)
+    for token in doc:
+        if token.dep_ == "ROOT":
+            return token
 
-    print("Functionlaity:", function)
-    answer["FUNCTION"] = function
 
-    print("Action :", action)
-    answer["ACTION"] = action
-
-    # find the target
-
+def get_target(sentence):
+    root_node = get_root(sentence)
     stack = [root_node]
     visited = [root_node]
     target_people = []
     while stack:
         token = stack.pop()
+        if token.pos_ in ["PRON", "PROPN"]:
+            target_people.append(token.lemma_)
 
         for i in token.children:
             if i.pos_ not in ["VERB"] and i not in visited:
                 stack.append(i)
                 visited.append(i)
-                if i.pos_ in ["PRON", "PROPN"]:
-                    target_people.append(i.lemma_)
 
-    target_people = find_known_names(target_people,known_person)
+    target_people = find_known_names(target_people, known_person)
 
-    print("Who :", target_people)
-    answer["WHO"] = target_people
+    if target_people == []:
+        return None
+    else:
+        return target_people
 
-    context = sentence
 
-    # get what
-
-    scheduled_for = " ".join(target_people)
-    q1 = "What should I " + action + "for?"
-    w1 = qa_model(question=q1, context=context)
-    print("What:", w1["answer"])
-    answer["WHAT"] = w1["answer"]
-
-    # get when parsed from date time
-
+def get_when(sentence):
+    doc = nlp(sentence)
     dates = []
     times = []
     for ent in doc.ents:
@@ -147,12 +131,55 @@ def break_querry(sentence: str):
     time = "".join(times)
     input_text = date + " " + time
     parsed_datetime = dateparser.parse(input_text)
+    return parsed_datetime
+
+
+def break_querry(sentence: str):
+    if not sentence:
+        return None
+
+    context = sentence
+
+    # return dict
+
+    answer = {}
+
+    # simplify the sentence and retrieve the root, action
+    sentence, action, root_node = break_sentence(sentence)
+
+    print("Simplified Sentence :", sentence)
+
+    # get function from function space
+    function = get_functionality(action)
+
+    # unknow action handling
+    if function[0] < 0.6:
+        phrase_handling(action)
+
+    print("Functionlaity:", function)
+    answer["FUNCTION"] = function
+
+    print("Action :", action)
+    answer["ACTION"] = action
+
+    # find the target
+    target_people = get_target(sentence)
+    print("Who :", target_people)
+    answer["WHO"] = target_people
+
+    # get what
+    q1 = "What should I " + action + "for?"
+    w1 = qa_model(question=q1, context=context)
+    print("What:", w1["answer"])
+    answer["WHAT"] = w1["answer"]
+
+    # get when parsed from date time
+    parsed_datetime = get_when(sentence)
     print("When:", parsed_datetime)
     answer["WHEN"] = parsed_datetime
 
     # get where
-
-    q4 = "Where should I " + action
+    q4 = "Where should I " + action + w1["answer"]
     w4 = qa_model(question=q4, context=context)
     if w4["score"] > 0.5:
         w4 = w4["answer"]

@@ -1,0 +1,9 @@
+dateparser==1.2.0
+pandas==2.2.1
+python_Levenshtein==0.25.0
+pyttsx3==2.90
+Requests==2.31.0
+spacy==3.7.4
+SpeechRecognition==3.10.1
+transformers==4.38.2
+translate==3.6.1

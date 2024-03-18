@@ -8,7 +8,7 @@ def listenHindi():
     with sr.Microphone() as source:
 
         print("Listening")
-        r.pause_threshold = 0.7
+        r.pause_threshold = 1
         audio = r.listen(source)
         try:
             print("Recognizing")
@@ -32,16 +32,15 @@ def listenEnglish():
     with sr.Microphone() as source:
 
         print("Listening")
-        r.pause_threshold = 0.7
+        r.pause_threshold = 1
         audio = r.listen(source)
         try:
             print("Recognizing")
             Query = r.recognize_google(audio, language="en")
-
-            print("the query is printed='", Query, "'")
+            print(Query)
+            return Query
 
         except Exception as e:
             print(e)
             print("Say that again sir")
-            return "None"
-        return Query
+            return None
