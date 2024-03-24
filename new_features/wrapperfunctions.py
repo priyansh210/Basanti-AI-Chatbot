@@ -19,7 +19,9 @@ from sentence_breakdown import *
 
 # person
 def createPerson(P: bsnti.People, n: str, y: str, p: str):
-    per = bsnti.person(n, y, p)
+    per = bsnti.person()
+    props = {'name': n, 'year': y, 'phone': p}
+    per.updateProperty(props)
     query = backendrequests.addPersonToBackend(per)
     query = query.json()
     print(query)
@@ -34,16 +36,19 @@ def delPerson(P: bsnti.People, prop: str, val: str):
             P.remove_person_by_prop(prop, val)
 
 
+def getAllPeople(P: bsnti.People):
+    backendrequests.fetchAllPeopleData(P)
 # message
 def createMessage(
     M: bsnti.Messages,
-    cb: str = "",
-    cf: str = "",
-    co: str = "",
-    t: datetime.datetime = "",
+    createdBy: str = "",
+    createdFor: str = "",
+    content: str = "",
 ):
-
-    mess = bsnti.message(cb, cf, co, t.isoformat())
+    time = datetime.datetime.now()
+    mess = bsnti.message()
+    props = {'createdBy': createdBy, 'createdFor': createdFor, 'content': content, 'time': time}
+    mess.updateProperty(props)
     query = backendrequests.addMessageToBackend(mess)
     query = query.json()
     print(query)
@@ -51,31 +56,41 @@ def createMessage(
     mess.addID(id)
     M.add_message(mess)
 
-
-# def createMessage(M:bsnti.Messages, props:dict):
-
-#     mess = bsnti.message("",props['WHO'],props['WHAT'],props['WHEN'].isoformat())
-#     query = backendrequests.addMessageToBackend(mess)
-#     query = query.json()
-#     print(query)
-#     id = query['id']
-#     mess.addID(id)
-#     M.add_message(mess)
+def getAllMessages(M: bsnti.Messages):
+    backendrequests.getAllMessages(M)
 
 
-# events
-# def createEvent(
-#     S: bsnti.Schedules,
-#     broken_query: dict
-# ):
-#     event = bsnti.events(broken_query.cb, cf, co, t.isoformat(), Time.isoformat(), Venue)
-#     query = backendrequests.addEventToBackend(event)
-#     query = query.json()
-#     id = query["id"]
-#     event.addID(id)
-#     S.add_event(event)
-def createEvent(E: bsnti.Schedules, props: dict):
-    event = bsnti.events("", props["WHO"],props["WHAT"], datetime.datetime.now().isoformat() ,props["WHEN"].isoformat(), props["WHERE"])
+def checkCurrentUserMessages(M: bsnti.Messages, currUser: str):
+    user_messages = []
+    for message in M.all_messages:
+        for_list = [ x.lower() for x in message.properties["createdFor"]]
+        if currUser.lower() in for_list:
+            user_messages.append(message)
+    # return user_messages, len(user_messages)
+    num = len(user_messages)
+    # print(f"You have {num} new message/s!")
+    message_list = []
+    message_list.append(f"You have {num} new message/s!")
+    for message in user_messages:
+        created_by = message.properties["createdBy"]
+        content = message.properties["content"]
+
+        if(created_by):
+            one = f"From {created_by.capitalize()}: "
+            # print(f"From {created_by.capitalize()}: ", end="")
+        else:
+            # print("From unkown: ", end="")
+            one = "From unkown: "
+        two = content
+        # print(content)
+        message_list.append(one+two)
+    return message_list
+
+#event
+def createEvent(E: bsnti.Schedules, props: dict, ):
+    event = bsnti.events()
+    init_dict = {"createdFor": props["WHO"], "content": props["WHAT"],"timeOfCreation": datetime.datetime.now().isoformat(),"createdBy": props["createdBy"],"time":props["WHEN"].isoformat(), "venue":props["WHERE"]}
+    event.updateProperty(init_dict)
     query = backendrequests.addEventToBackend(event)
     query = query.json()
     print(query)
@@ -83,22 +98,49 @@ def createEvent(E: bsnti.Schedules, props: dict):
     event.addID(id)
     E.add_event(event)
 
+def getAllEvents(E:bsnti.Schedules):
+    backendrequests.getAllEvents(E)
+
+def checkCurrentUserEvents(E:bsnti.Schedules, currUser: str):
+    user_events = []
+    for event in E.all_events:
+        for_list = [ x.lower() for x in event.properties["createdFor"]]
+        if currUser.lower() in for_list:
+            user_events.append(event)
+    # return user_events, len(user_events)
+    num = len(user_events)
+    # print(f"You have {num} new event/s!")
+    event_list = []
+    event_list.append(f"You have {num} new event/s!")
+    for event in user_events:
+        created_by = event.properties["createdBy"]
+        content = event.properties["content"]
+
+        if(created_by):
+            one = f"From {created_by.capitalize()}: "
+            # print(f"From {created_by.capitalize()}: ", end="")
+        else:
+            # print("From unkown: ", end="")
+            one = "From unkown: "
+        two = content
+        # print(content)
+        event_list.append(one+two)
+    return event_list
 
 # inv_objects
 
-
 def createInvObj(I: bsnti.Inventory, n: str = "", l: str = "", q: str = ""):
 
-    obj = bsnti.inv_object(n, l, q)
+    obj = bsnti.inv_object()
+    props = {'name': n, 'location': l, 'quantity': q}
+    obj.updateProperty(props)
     query = backendrequests.addObjToBackend(obj)
     query = query.json()
     id = query["id"]
     obj.addID(id)
     I.add_item(obj)
 
-
 # check function for necessary params returned from query breaker
-
 
 def checkNecessaryParams(broken_query: dict, necessary_params: list):
     for el in necessary_params:

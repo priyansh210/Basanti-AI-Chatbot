@@ -1,51 +1,15 @@
 import datetime
-
-
-class inv_object:
-    def __init__(self, n, l, q) -> None:  # quantity kept as tring
-        self.properties = {"name": n, "location": l, "quantity": q}
-
-    def addID(self, id: str):
-        self.id = (
-            id  # made to add id to object after pushing to mongo and recieving its id
-        )
-
-    def updateProperty(self, prop: str, val):
-        self.properties[prop] = val
-
-    def deleteProperty(self, key):
-        self.properties.pop(key)
-
-    def getProperty(self, key):
-        return self.properties[key]
-
-
-class person:
-    def __init__(self, n, y, p) -> None:
-        self.properties = {"name": n, "year": y, "phone": p}
-
-    def addID(self, id):
-        self.id = (
-            id  # made to add id to object after pushing to mongo and recieving its id
-        )
-
-    def updateProperty(self, prop, val):
-        self.properties[prop] = val
-
-    def deleteProperty(self, key):
-        self.properties.pop(key)
-
-    def getProperty(self, key):
-        return self.properties[key]
-
+ #change code so that all classes except the ones with lists inherit from the template class.
+#No need to initialize the properties, just keep it an empty dictionary
+#Make methods to add properties using the inherited funcitions
 
 class TemplateClass:
-    def __init__(self, created_by, created_for, content, t) -> None:
+    def __init__(self) -> None:
         self.properties = {
-            "createdBy": created_by,
-            "createdFor": created_for,
-            "content": content,
-            "createdAt": t,
+            # "createdBy": created_by,
+            # "createdFor": created_for,
+            # "content": content,
+            # "createdAt": t,
             # for mongo, it returns id automatically which will be used to set the id. To be changed when database is shifted
             # the id returned by mongo will be added as an id field
         }
@@ -56,8 +20,9 @@ class TemplateClass:
         )
 
     def updateProperty(self, propDict: dict):
-        for key, value in propDict.items():
-            self.properties[key] = value
+        self.properties.update(propDict)
+        # for key, value in propDict.items():
+        #     self.properties[key] = value
 
     def deleteProperty(self, key):
         self.properties.pop(key)
@@ -67,28 +32,39 @@ class TemplateClass:
 
 
 class task(TemplateClass):
-    def __init__(self, created_by, created_for, content, t) -> None:
-        super().__init__(created_by, created_for, content, t)
-
+    def __init__(self) -> None:
+        super().__init__()
 
 class message(TemplateClass):
     def __init__(
-        self,
-        created_by: person,
-        created_for: list[person],
-        content: str,
-        t: datetime.datetime,
+        self
+        # created_by: person,
+        # created_for: list[person],
+        # content: str,
+        # t: datetime.datetime,
     ) -> None:
-        super().__init__(created_by, created_for, content, t)
-
+        super().__init__()
 
 class events(TemplateClass):
-    def __init__(self, created_by, created_for, content, t, Time, Venue) -> None:
-        super().__init__(created_by, created_for, content, t)
+    def __init__(self) -> None:
+        super().__init__()
         # name of event stored in content
         # make this better by changing update property to take in a dictionary
-        super().updateProperty({"Time": Time})
 
+class person(TemplateClass):
+    def __init__(self) -> None:
+        super().__init__()
+        #name
+        #year
+        #phone
+        #chat id
+
+class inv_object(TemplateClass):
+    def __init__() -> None:
+        super().__init__()
+        #name
+        #quantity
+        #location
 
 class Messages:
     def __init__(self) -> None:
@@ -106,9 +82,8 @@ class Messages:
         return [
             msg
             for msg in self.all_messages
-            if msg.properties["createdFor"] == person.properties["name"]
+            if person.properties["name"] in msg.properties["createdFor"]
         ]
-
 
 class People:
     def __init__(self, p: list[person] = []) -> None:
@@ -142,7 +117,7 @@ class People:
 
 
 class Schedules:
-    def __init__(self, e=[]) -> None:
+    def __init__(self, e:list[events]=[]) -> None:
         self.all_events = e
 
     def add_event(self, e):

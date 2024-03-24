@@ -3,6 +3,14 @@ import requests
 bot_token = '6934287768:AAGhxy-yrKIyhD4eOzgakBMivGfps64Ddt'
 group_chat_id = -1001949259483
 message = 'helo'
+from data import PEOPLE
+
+# mapping = {}
+
+# for person in PEOPLE.all_persons:
+#     name = person.properties["name"].split(" ")[0].lower()
+#     telegramChatID = person.properties["telegramChatID"]
+#     mapping[name] = telegramChatID
 
 #change these chatids to be parameters later
 aswin_chat_id = 5151689696
@@ -20,7 +28,7 @@ mapping = {
     'priyansh': priyansh_chat_id,
     'shubh': shubh_chat_id,
     'anmol': anmol_chat_id,
-    'krishna': krishna_chat_id
+    'krishna': krishna_chat_id,
 }
 
 def sendTelegramMessage(nameList:list[str], message:str):
@@ -29,6 +37,7 @@ def sendTelegramMessage(nameList:list[str], message:str):
         message = '&text='+message
         try: 
             success = requests.get(baseURL+str(chat_id)+message)
+            print(success)
         except Exception as e:
             print(e)
-        print(success)
+        

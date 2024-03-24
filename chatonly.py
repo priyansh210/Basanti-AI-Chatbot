@@ -6,7 +6,7 @@ from listen import *
 import speak
 from intent_classifier import *
 import requests
-
+  
 break_query = sb.break_querry
 
 from data import MESSAGES, SCHEDULES, PEOPLE
@@ -14,20 +14,21 @@ import new_features.telegram as telegram
 
 
 def listen_state(created_by):
-    sentence = listenEnglish()
-    # speak.speakEnglish("Do you want to ask any questions")
-    # print('here1')
-    
-    # print('here2')
-    print(sentence)
-    if not sentence:
-        return
-    intent, confidence = predict_sentiment(sentence)
-    print(intent)
-    if intent == 'Question':
-        question_bot(created_by, sentence)
-    elif intent == 'Action':
-        action_bot(created_by, sentence)
+    while True: 
+        sentence = listenEnglish()
+        # speak.speakEnglish("Do you want to ask any questions")
+        # print('here1')
+        
+        # print('here2')
+        print(sentence)
+        if not sentence:
+            continue
+        intent, confidence = predict_sentiment(sentence)
+        print(intent)
+        if intent == 'Question':
+            question_bot(created_by, sentence)
+        elif intent == 'Action':
+            action_bot(created_by, sentence)
         
 
 def action_bot(created_by, sentence):
@@ -67,7 +68,7 @@ def action_bot(created_by, sentence):
 
         # speak.speakEnglish(reconfirmAction)
         # conditions
-
+    
         telegram.sendTelegramMessage(broken_query["WHO"], broken_query["WHAT"])
 
     elif action == "GET MESSAGE":
@@ -103,4 +104,4 @@ def question_bot(created_by, question:str):
     answer:str = answer["message"]
     speak.speakEnglish(answer.replace('\n', " "))
 
-# listen_state('aswin')
+listen_state('aswin')
